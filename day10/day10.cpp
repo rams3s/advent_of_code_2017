@@ -13,7 +13,12 @@ class cyclic_iterator
 {
 public:
 
-    cyclic_iterator( const It & begin, const It & end ) : current( begin ), begin( begin ), end( end ) {}
+    cyclic_iterator( const It & begin, const It & end, const int index ) : begin( begin ), end( end )
+    {
+        auto length = std::distance( begin, end );
+        current = begin;
+        std::advance( current, index % length );
+    }
 
     bool operator==( const cyclic_iterator & other ) const
     {
@@ -38,28 +43,12 @@ public:
         return *this;
     }
 
-    cyclic_iterator operator++( int )
-    {
-        cyclic_iterator saved = *this;
-        ++*this;
-
-        return saved;
-    }
-
     cyclic_iterator & operator--()
     {
         if (current == begin) current = end;
         --current;
 
         return *this;
-    }
-
-    cyclic_iterator operator--(int)
-    {
-        cyclic_iterator saved = *this;
-        --*this;
-
-        return saved;
     }
 
 private:
@@ -80,10 +69,8 @@ void sparse_hash( std::vector<int> & v, const std::vector<int> & lengths, const 
     {
         for ( const auto length : lengths )
         {
-            cyclic_iterator<std::vector<int>::iterator> begin( v.begin(), v.end() );
-            std::advance( begin, index );
-            cyclic_iterator<std::vector<int>::iterator> end( v.begin(), v.end() );
-            std::advance( end, index + length );
+            cyclic_iterator<std::vector<int>::iterator> begin( v.begin(), v.end(), index );
+            cyclic_iterator<std::vector<int>::iterator> end( v.begin(), v.end(), index + length );
 
             std::reverse( begin, end );
             index += length + skip;
