@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.0)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-Weverything -Werror -Wno-c++98-compat -Wno-missing-prototypes ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+add_executable(day1 day1/main.cpp)
+add_executable(day2 day2/main.cpp)
+add_executable(day3 day3/main.cpp)
+add_executable(day4 day4/main.cpp)
+add_executable(day5 day5/main.cpp)
+add_executable(day6 day6/main.cpp)
+add_executable(day7 day7/main.cpp)
+add_executable(day8 day8/main.cpp)
+add_executable(day9 day9/main.cpp)
+add_executable(day10 day10/main.cpp)
+add_executable(day11 day11/main.cpp)
+add_executable(day12 day12/main.cpp)
+add_executable(day13 day13/main.cpp)
+add_executable(day14 day14/main.cpp)
+add_executable(day15 day15/main.cpp)
+
