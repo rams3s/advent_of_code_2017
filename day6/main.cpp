@@ -36,7 +36,7 @@ int main()
     {
         auto max = std::max_element( v.cbegin(), v.cend() );
         int value = *max;
-        int index = max - v.cbegin();
+        auto index = static_cast<std::size_t>( max - v.cbegin() );
         v[index] = 0;
 
         while ( value > 0 )

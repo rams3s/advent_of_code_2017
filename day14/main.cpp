@@ -16,11 +16,11 @@ class cyclic_iterator
 {
 public:
 
-    cyclic_iterator( const It & begin, const It & end, const int index ) : begin( begin ), end( end )
+    cyclic_iterator( const It & b, const It & e, const int i ) : begin( b ), end( e )
     {
-        auto length = std::distance( begin, end );
-        current = begin;
-        std::advance( current, index % length );
+        auto length = std::distance( b, e );
+        current = b;
+        std::advance( current, i % length );
     }
 
     bool operator==( const cyclic_iterator & other ) const
@@ -85,11 +85,11 @@ void sparse_hash( std::array<int, 256> & v, const std::vector<int> & lengths, co
 std::string dense_hash( std::array<int, 256> & v )
 {
     std::ostringstream hash;
-    int index = 0;
+    std::size_t index = 0;
 
     for (int i = 0; i < 16; ++i)
     {
-        int block = v[index++];
+        auto block = v[index++];
         for (int j = 1; j < 16; ++j)
         {
             block ^= v[index++];
@@ -109,7 +109,7 @@ int main()
     std::getline( std::cin, input );
 
     std::array<int, 128 * 128> grid;
-    int index = 0;
+    std::size_t index = 0;
 
     for (int i = 0; i < 128; ++i)
     {
@@ -136,18 +136,18 @@ int main()
         sparse_hash( v, lengths, 64 );
         std::string hash = dense_hash( v );
 
-        for ( char c : hash )
+        for ( char c2 : hash )
         {
             int value;
 
-            if ( c >= '0' && c <= '9' )
+            if ( c2 >= '0' && c2 <= '9' )
             {
-                value = c - '0';
+                value = c2 - '0';
             }
             else
             {
-                assert ( c >= 'a' && c <= 'f' );
-                value = 10 + c - 'a';
+                assert ( c2 >= 'a' && c2 <= 'f' );
+                value = 10 + c2 - 'a';
             }
 
             grid[index++] = ( value & 0x8 ) ? 1 : 0;
@@ -161,16 +161,16 @@ int main()
 
     int group_count = 0;
     decltype( grid )::const_iterator it;
-    std::set<int> visited;
+    std::set<std::size_t> visited;
 
     std::for_each( grid.begin(), grid.end(), [] (auto & v) { --v; } );
 
     while ( ( it = std::find( grid.cbegin(), grid.cend(), 0 ) ) != grid.cend() )
     {
-        std::deque<int> to_visit;
+        std::deque<std::size_t> to_visit;
 
         ++group_count;
-        index = std::distance( grid.cbegin(), it );
+        index = static_cast<std::size_t>( std::distance( grid.cbegin(), it ) );
 
         to_visit.push_back( index );
 
@@ -186,10 +186,10 @@ int main()
             assert( cell == 0 );
             cell = group_count;
 
-            auto add_cell = [&]( int cell_index ) { if ( grid[ cell_index ] == 0 ) to_visit.push_back( cell_index ); };
+            auto add_cell = [&]( auto cell_index ) { if ( grid[ cell_index ] == 0 ) to_visit.push_back( cell_index ); };
 
-            int row = index / 128;
-            int col = index % 128;
+            auto row = index / 128;
+            auto col = index % 128;
             if ( row > 0 ) add_cell( index - 128 );
             if ( row < 127 ) add_cell( index + 128 );
             if ( col > 0 ) add_cell( index - 1 );

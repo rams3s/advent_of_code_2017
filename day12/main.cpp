@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <regex>
 #include <set>
 #include <sstream>
@@ -9,7 +10,7 @@
 struct Program
 {
     std::vector<int> ConnectedTable;
-    int Group = -1;
+    std::size_t Group = std::numeric_limits<std::size_t>::max();
 };
 
 int main()
@@ -47,7 +48,7 @@ int main()
 
     for ( const auto & program : program_map )
     {
-        if ( program.second.Group != -1 ) continue;
+        if ( program.second.Group != std::numeric_limits<std::size_t>::max() ) continue;
 
         std::set<int> group;
         std::deque<int> open;

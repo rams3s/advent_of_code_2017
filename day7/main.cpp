@@ -29,12 +29,12 @@ struct Program
         if ( children.size() >= 2 )
         {
             int first_child_weight = children[0]->totalWeight;
-            int other_child_weight;
+            int other_child_weight = 0;
             bool first_child_weight_confirmed = false;
             bool all_the_same = true;
-            int other_child_index = 0;
+            std::size_t other_child_index = 0;
 
-            for ( int i = 1; i < children.size(); ++i )
+            for ( std::size_t i = 1; i < children.size(); ++i )
             {
                 if ( !all_the_same && i > 2 ) break;
 

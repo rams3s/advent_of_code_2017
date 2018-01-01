@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <iomanip>
 #include <iostream>
@@ -13,11 +14,11 @@ class cyclic_iterator
 {
 public:
 
-    cyclic_iterator( const It & begin, const It & end, const int index ) : begin( begin ), end( end )
+    cyclic_iterator( const It & b, const It & e, const int i ) : begin( b ), end( e )
     {
-        auto length = std::distance( begin, end );
-        current = begin;
-        std::advance( current, index % length );
+        auto length = std::distance( b, e );
+        current = b;
+        std::advance( current, i % length );
     }
 
     bool operator==( const cyclic_iterator & other ) const
@@ -58,7 +59,7 @@ private:
     It end;
 };
 
-void sparse_hash( std::vector<int> & v, const std::vector<int> & lengths, const int round_count )
+void sparse_hash( std::array<int, 256> & v, const std::vector<int> & lengths, const int round_count )
 {
     int skip = 0;
     int index = 0;
@@ -69,8 +70,8 @@ void sparse_hash( std::vector<int> & v, const std::vector<int> & lengths, const 
     {
         for ( const auto length : lengths )
         {
-            cyclic_iterator<std::vector<int>::iterator> begin( v.begin(), v.end(), index );
-            cyclic_iterator<std::vector<int>::iterator> end( v.begin(), v.end(), index + length );
+            cyclic_iterator<std::array<int, 256>::iterator> begin( v.begin(), v.end(), index );
+            cyclic_iterator<std::array<int, 256>::iterator> end( v.begin(), v.end(), index + length );
 
             std::reverse( begin, end );
             index += length + skip;
@@ -79,16 +80,14 @@ void sparse_hash( std::vector<int> & v, const std::vector<int> & lengths, const 
     }
 }
 
-std::string dense_hash( std::vector<int> & v )
+std::string dense_hash( std::array<int, 256> & v )
 {
-    assert( v.size() == 256 );
-
     std::ostringstream hash;
-    int index = 0;
+    std::size_t index = 0;
 
     for (int i = 0; i < 16; ++i)
     {
-        int block = v[index++];
+        auto block = v[index++];
         for (int j = 1; j < 16; ++j)
         {
             block ^= v[index++];
@@ -117,7 +116,7 @@ int main()
         lengths.push_back( length );
     }
 
-    std::vector<int> v(256);
+    std::array<int,256> v;
     sparse_hash( v, lengths, 1 );
 
     std::cout << "Part 1: " << v[0] * v[1] << std::endl;
